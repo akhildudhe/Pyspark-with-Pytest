@@ -1,6 +1,5 @@
 from pyspark.sql import SparkSession
 import configparser
-import sys
 
 def SparkSession_initialize(environment):
 
