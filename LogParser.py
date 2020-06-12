@@ -1,6 +1,9 @@
 import SparkSessionWrapper
 import re
 import sys
+import logging
+
+logging.basicConfig(filename='logs/sparkjob.log', level=logging.INFO, format='%(asctime)s:%(levelname)s%(message)s')
 
 def custom_text2dataframe(strg):
 	if re.search(".",strg):
@@ -12,17 +15,21 @@ def custom_text2dataframe(strg):
 
 def removing_garbage(dataframe):
 	df = dataframe.filter("ip1!='ND'")
+	logging.info("Function removing_garbage succesfully executed")
 	return df
 
 def cast2Integer(dataframe,column_name):
 	df = dataframe.withColumn(column_name,col(column_name).cast('Integer'))
+	logging.info("Function cast2Integer succesfully executed")
 	return df
 
 def string2TimeStamp(dataframe,column_name):
 	df=dataframe.withColumn(column_name,to_timestamp(col('timestamp'), time_pattern))
+	logging.info("Function string2TimeStamp succesfully executed")
 	return df
 
 def analyticsLogic(dataframe,column_name):
+	logging.info("Function analyticsLogic succesfully executed")
 	pass
 
 
