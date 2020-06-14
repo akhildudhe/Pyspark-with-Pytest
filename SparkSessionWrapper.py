@@ -20,4 +20,4 @@ def SparkSession_initialize(environment):
  
 	spark = SparkSession.builder.master(execution_mode).appName(appname).getOrCreate()
 
-	return [spark,inputdir,output]
+	return [spark,inputdir,outputdir]

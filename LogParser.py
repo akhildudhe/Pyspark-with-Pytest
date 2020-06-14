@@ -2,15 +2,16 @@ import SparkSessionWrapper
 import re
 import sys
 import logging
+from pyspark.sql.functions import col,to_timestamp
 
 logging.basicConfig(filename='logs/sparkjob.log', level=logging.INFO, format='%(asctime)s:%(levelname)s%(message)s')
 
 def custom_text2dataframe(strg):
 	if re.search(".",strg):
-    	x= pattern.search(strg)
-    	return(x.group(1),x.group(2),x.group(3),x.group(4),x.group(5),x.group(6),x.group(7),x.group(8),x.group(9),x.group(10))
+		x= pattern.search(strg)
+		return (x.group(1),x.group(2),x.group(3),x.group(4),x.group(5),x.group(6),x.group(7),x.group(8),x.group(9),x.group(10))
 	else:
-    	return("ND","ND","ND","ND","ND","ND","ND","ND","ND","ND")
+		return ("ND","ND","ND","ND","ND","ND","ND","ND","ND","ND")
 
 
 def removing_garbage(dataframe):
@@ -24,7 +25,7 @@ def cast2Integer(dataframe,column_name):
 	return df
 
 def string2TimeStamp(dataframe,column_name):
-	df=dataframe.withColumn(column_name,to_timestamp(col('timestamp'), time_pattern))
+	df=dataframe.withColumn(column_name,to_timestamp(col(column_name), time_pattern))
 	logging.info("Function string2TimeStamp succesfully executed")
 	return df
 
@@ -54,8 +55,11 @@ if __name__ == '__main__':
 
 
 	data_frame = textrdd.map(lambda x:custom_text2dataframe(x))
+	data_frame = data_frame.toDF(column_names)
 	data_frame = removing_garbage(data_frame)
 	data_frame = cast2Integer(data_frame,'port')
 	data_frame = string2TimeStamp(data_frame,'datetime')
+	data_frame.coalesce(1)
+	data_frame.write.format('csv').mode('append').save(output_dir)
 	
 	spark.stop()
